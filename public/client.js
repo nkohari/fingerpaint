@@ -12,15 +12,14 @@
         return this.resizeCanvas();
       }, this));
       this.socket.on('hello', __bind(function(me, users) {
-        var count, id, user;
+        var id, user, _results;
         this.me = me;
-        count = 0;
+        _results = [];
         for (id in users) {
           user = users[id];
-          this.addUser(user);
-          count++;
+          _results.push(this.addUser(user));
         }
-        return $('#status').html("" + count + " " + (count === 1 ? 'user' : 'users') + " connected");
+        return _results;
       }, this));
       this.socket.on('join', __bind(function(user) {
         return this.addUser(user);
@@ -64,11 +63,21 @@
       });
     };
     Client.prototype.addUser = function(user) {
-      return this.users[user.id] = {
+      var count, key;
+      this.users[user.id] = {
         id: user.id,
         color: user.color,
         avatar: this.createAvatar(user)
       };
+      count = ((function() {
+        var _results;
+        _results = [];
+        for (key in this.users) {
+          _results.push(key);
+        }
+        return _results;
+      }).call(this)).length;
+      return $('#status').html("" + count + " " + (count === 1 ? 'user' : 'users') + " connected");
     };
     Client.prototype.changeNick = function(user, nick) {
       user.nick = nick;

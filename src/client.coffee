@@ -16,11 +16,7 @@ class Fingerpaint.Client
 		
 		@socket.on 'hello', (me, users) =>
 			@me = me
-			count = 0
-			for id, user of users
-				@addUser(user)
-				count++
-			$('#status').html("#{count} #{if count is 1 then 'user' else 'users'} connected")
+			@addUser(user) for id, user of users
 		
 		@socket.on 'join', (user) =>
 			@addUser(user)
@@ -60,6 +56,8 @@ class Fingerpaint.Client
 			id:     user.id
 			color:  user.color
 			avatar: @createAvatar(user)
+		count = (key for key of @users).length
+		$('#status').html("#{count} #{if count is 1 then 'user' else 'users'} connected")
 	
 	changeNick: (user, nick) ->
 		user.nick = nick
