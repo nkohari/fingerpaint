@@ -29,21 +29,31 @@ randomColor = ->
 	"#{Math.floor(Math.random() * 128 + 32)},#{Math.floor(Math.random() * 128 + 32)},#{Math.floor(Math.random() * 128 + 32)}"
 	
 io = socketio.listen app
+io.set 'log level', 0
 
-users = []
+users = {}
 
 io.sockets.on 'connection', (socket) ->
 	
 	sys.puts "[fingerpaint] user #{socket.id} connected"
 	
 	user =
-		id: socket.id
+		id:    socket.id
+		nick:  socket.id
 		color: randomColor()
 		
+	users[socket.id] = user
+	
 	socket.json.emit 'hello', user, users
 	socket.broadcast.json.emit 'join', user
 	
-	users.push user
-	
 	socket.on 'move', (position, drawing) ->
-		socket.broadcast.json.emit 'move', socket.id, position, drawing
+		io.sockets.json.emit 'move', socket.id, position, drawing
+	
+	socket.on 'nick', (nick) ->
+		user.nick = nick
+		io.sockets.json.emit 'nick', socket.id, nick
+		
+	socket.on 'disconnect', ->
+		delete users[socket.id]
+		sys.puts "[fingerpaint] user #{socket.id} disconnected"
