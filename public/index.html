@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Fingerpaint</title>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato&v1"/>
+	</head>
+	<body>
+		<canvas id="draw"></canvas>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="client.js"></script>
+		<script>
+		$(function() { new Fingerpaint.Client(); })
+		</script>
+	</body>
+</html>
