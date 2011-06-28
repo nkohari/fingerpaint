@@ -20,6 +20,9 @@ class Fingerpaint.Client
 		
 		@socket.on 'join', (user) =>
 			@addUser(user)
+		
+		@socket.on 'part', (user) =>
+			@removeUser(user)
 			
 		@socket.on 'move', (id, position, drawing) =>
 			user = @users[id]
@@ -56,12 +59,21 @@ class Fingerpaint.Client
 			id:     user.id
 			color:  user.color
 			avatar: @createAvatar(user)
-		count = (key for key of @users).length
-		$('#status').html("#{count} #{if count is 1 then 'user' else 'users'} connected")
+		@updateStatus()
 	
 	changeNick: (user, nick) ->
 		user.nick = nick
 		$('.nick', user.avatar).html(nick)
+	
+	updateStatus: ->
+		count = (key for key of @users).length
+		$('#status').html("#{count} #{if count is 1 then 'user' else 'users'} connected")
+	
+	removeUser: (user) ->
+		avatar = @users[user.id].avatar
+		avatar.remove()
+		delete @users[user.id]
+		@updateStatus()
 	
 	moveUser: (user, position, drawing) ->
 		

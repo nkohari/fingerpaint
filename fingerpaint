@@ -56,4 +56,5 @@ io.sockets.on 'connection', (socket) ->
 		
 	socket.on 'disconnect', ->
 		delete users[socket.id]
+		socket.broadcast.emit 'part', user
 		sys.puts "[fingerpaint] user #{socket.id} disconnected"

@@ -24,6 +24,9 @@
       this.socket.on('join', __bind(function(user) {
         return this.addUser(user);
       }, this));
+      this.socket.on('part', __bind(function(user) {
+        return this.removeUser(user);
+      }, this));
       this.socket.on('move', __bind(function(id, position, drawing) {
         var user;
         user = this.users[id];
@@ -63,12 +66,19 @@
       });
     };
     Client.prototype.addUser = function(user) {
-      var count, key;
       this.users[user.id] = {
         id: user.id,
         color: user.color,
         avatar: this.createAvatar(user)
       };
+      return this.updateStatus();
+    };
+    Client.prototype.changeNick = function(user, nick) {
+      user.nick = nick;
+      return $('.nick', user.avatar).html(nick);
+    };
+    Client.prototype.updateStatus = function() {
+      var count, key;
       count = ((function() {
         var _results;
         _results = [];
@@ -79,9 +89,12 @@
       }).call(this)).length;
       return $('#status').html("" + count + " " + (count === 1 ? 'user' : 'users') + " connected");
     };
-    Client.prototype.changeNick = function(user, nick) {
-      user.nick = nick;
-      return $('.nick', user.avatar).html(nick);
+    Client.prototype.removeUser = function(user) {
+      var avatar;
+      avatar = this.users[user.id].avatar;
+      avatar.remove();
+      delete this.users[user.id];
+      return this.updateStatus();
     };
     Client.prototype.moveUser = function(user, position, drawing) {
       var ctx, offset, old;
